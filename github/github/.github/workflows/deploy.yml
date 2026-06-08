@@ -1,0 +1,9 @@
+name: Copy
+on: push
+jobs:
+  copy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: cp "gerador narrativas biblicas.html" index.html
+      - run: git config user.email "a@a.com" && git config user.name "bot" && git add index.html && git commit -m "copy" && git push
