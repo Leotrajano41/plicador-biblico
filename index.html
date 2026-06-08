@@ -1,1 +1,1123 @@
-ok
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Explicador Bíblico — Gerador de Narrativas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0a06;
+  --bg2: #130f0a;
+  --bg3: #1a1410;
+  --bg4: #221c14;
+  --gold: #d4af37;
+  --gold2: #c5a059;
+  --gold3: #8c6c30;
+  --gold4: #f3e5ab;
+  --red: #6b1a1a;
+  --red2: #8b2020;
+  --red3: #3d0f0f;
+  --border: rgba(212,175,55,0.15);
+  --border2: rgba(212,175,55,0.30);
+  --border3: rgba(212,175,55,0.60);
+  --txt: #e8e4da;
+  --txt2: #b0a890;
+  --txt3: #7a7060;
+  --success: #7aaa70;
+  --danger: #cc5555;
+  --warn: #e0a040;
+  --info: #5090b0;
+  --fs: 'Cinzel','Georgia',serif;
+  --fn: 'Outfit','Inter',sans-serif;
+  --r1: 6px; --r2: 10px; --r3: 16px;
+  --sh: 0 4px 24px rgba(0,0,0,0.7);
+  --glow: 0 0 30px rgba(212,175,55,0.10);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:15px;scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--fn);background:var(--bg);color:var(--txt);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 0 40px;
+  background-image:radial-gradient(ellipse at 50% 0%, rgba(107,26,26,0.25) 0%, transparent 60%),
+  radial-gradient(ellipse at 50% 100%, rgba(139,108,48,0.08) 0%, transparent 50%)}
+
+/* ── HEADER ── */
+.site-header{width:100%;background:linear-gradient(180deg,#1a0f0f 0%,#110c08 100%);border-bottom:1px solid var(--border);padding:28px 20px 20px;text-align:center;position:relative;overflow:hidden}
+.site-header::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.5}
+.header-cross{font-size:2rem;margin-bottom:8px;display:block;filter:drop-shadow(0 0 12px rgba(212,175,55,0.5))}
+.header-title{font-family:var(--fs);font-size:2.2rem;font-weight:900;letter-spacing:.12em;background:linear-gradient(135deg,var(--txt) 0%,var(--gold4) 50%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:none}
+.header-sub{font-size:.78rem;color:var(--txt3);letter-spacing:.1em;text-transform:uppercase;margin-top:6px}
+.header-credits{display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-size:.8rem;background:rgba(212,175,55,.08);border:1px solid var(--border);border-radius:20px;padding:5px 14px;color:var(--gold2)}
+.credits-dot{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success)}
+
+/* ── MAIN WRAPPER ── */
+.main{width:100%;max-width:1100px;padding:0 20px;margin-top:0}
+
+/* ── TABS NAV ── */
+.tabs-nav{display:flex;overflow-x:auto;gap:2px;padding:0;background:var(--bg2);border-bottom:2px solid var(--border);scrollbar-width:none;position:sticky;top:0;z-index:100;-webkit-overflow-scrolling:touch}
+.tabs-nav::-webkit-scrollbar{display:none}
+.tab-btn{background:none;border:none;color:var(--txt3);font-family:var(--fs);font-size:.72rem;font-weight:600;padding:16px 18px;cursor:pointer;transition:.2s;white-space:nowrap;letter-spacing:.06em;text-transform:uppercase;position:relative;display:flex;align-items:center;gap:6px;border-bottom:2px solid transparent;margin-bottom:-2px;min-height:52px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.tab-btn:hover{color:var(--gold2);background:rgba(212,175,55,.04)}
+.tab-btn.active{color:var(--gold);background:rgba(212,175,55,.06);border-bottom-color:var(--gold);font-weight:700}
+
+/* ── PANELS ── */
+.tab-panel{display:none;padding:24px 0;flex-direction:column;gap:20px;animation:fadeUp .35s ease-out}
+.tab-panel.active{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARDS ── */
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:20px 22px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--sh)}
+.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--fs);font-size:.8rem;font-weight:700;color:var(--gold2);text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);padding-bottom:10px}
+.panel-header{border-left:3px solid var(--gold);padding-left:12px;margin-bottom:4px}
+.panel-header h2{font-family:var(--fs);font-size:1.15rem;font-weight:700;color:var(--txt)}
+.panel-header p{font-size:.78rem;color:var(--txt2);margin-top:3px}
+
+/* ── FORM ── */
+.input-group{display:flex;flex-direction:column;gap:5px}
+.input-group label{font-size:.7rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em}
+input[type=text],input[type=password],select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--r1);color:var(--txt);font-family:var(--fn);font-size:1rem;padding:12px 14px;outline:none;transition:.2s;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--border3);background:#1a1510;box-shadow:0 0 8px rgba(212,175,55,.12)}
+input:hover,select:hover,textarea:hover{border-color:var(--border2)}
+select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23c5a059' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-color:var(--bg);padding-right:36px}
+select option{background:#161210;color:var(--txt)}
+/* Fix Safari iOS — garante que selects são clicáveis */
+select::-webkit-inner-spin-button{display:none}
+@supports (-webkit-touch-callout: none){
+  select{font-size:16px!important;min-height:44px}
+  input[type=text],input[type=password]{font-size:16px!important;min-height:44px}
+}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.grid-5{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+
+/* ── CHECKBOXES ESPECIAIS ── */
+.checks-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.check-item{display:flex;align-items:center;gap:10px;background:var(--bg4);border:1px solid var(--border);border-radius:var(--r1);padding:10px 12px;cursor:pointer;transition:.2s;user-select:none}
+.check-item:hover{border-color:var(--border2);background:#241e16}
+.check-item.checked{border-color:var(--gold3);background:rgba(212,175,55,.07)}
+.check-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--gold);cursor:pointer;flex-shrink:0}
+.check-label{font-size:.78rem;color:var(--txt2);line-height:1.3}
+.check-label strong{color:var(--txt);display:block;font-size:.8rem}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-family:var(--fn);font-weight:700;font-size:.85rem;padding:13px 18px;border-radius:var(--r1);border:none;cursor:pointer;transition:.2s;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:44px}
+.btn:active{transform:translateY(1px)}
+.btn-gold{background:linear-gradient(135deg,var(--gold) 0%,var(--gold3) 100%);color:#0e0a06;border:1px solid var(--gold4)}
+.btn-gold:hover{background:linear-gradient(135deg,var(--gold4) 0%,var(--gold) 100%);box-shadow:0 4px 18px rgba(212,175,55,.4);transform:translateY(-1px)}
+.btn-action{width:100%;padding:14px;font-size:.9rem;border-radius:var(--r2);font-family:var(--fs);letter-spacing:.1em;margin-top:6px}
+.btn-sm{padding:5px 12px;font-size:.7rem;height:28px;background:rgba(212,175,55,.08);border:1px solid var(--border2);color:var(--gold2)}
+.btn-sm:hover{background:rgba(212,175,55,.15);color:var(--gold)}
+.btn-sm.copied{background:rgba(122,170,112,.15);color:var(--success);border-color:var(--success)}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--gold2)}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,175,55,.06)}
+
+/* ── OUTPUT ── */
+.output-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r1);padding:14px;display:flex;flex-direction:column;gap:10px}
+.output-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(212,175,55,.07);padding-bottom:8px}
+.output-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--txt3);display:flex;align-items:center;gap:6px}
+.output-textarea{background:transparent!important;border:none!important;box-shadow:none!important;font-size:.88rem;line-height:1.75;min-height:240px;color:var(--txt);resize:vertical}
+
+/* ── IDEIAS CARDS ── */
+.ideas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+.idea-card{background:var(--bg4);border:1px solid var(--border);border-radius:var(--r1);padding:14px;display:flex;flex-direction:column;gap:9px;transition:.2s}
+.idea-card:hover{border-color:var(--border2);box-shadow:var(--sh)}
+.idea-num{font-size:.63rem;font-weight:700;padding:2px 8px;background:rgba(212,175,55,.12);color:var(--gold);border-radius:10px;text-transform:uppercase;align-self:flex-start}
+.idea-title{font-family:var(--fs);font-size:.88rem;font-weight:700;color:var(--txt);line-height:1.3}
+.idea-desc{font-size:.75rem;color:var(--txt2);line-height:1.5}
+.idea-viral{font-size:.72rem;color:var(--txt3);font-style:italic;border-top:1px dashed rgba(212,175,55,.1);padding-top:7px}
+
+/* ── THUMBNAILS ── */
+.thumb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.thumb-card{background:var(--bg4);border-radius:var(--r1);padding:14px;display:flex;flex-direction:column;gap:10px}
+.thumb-card:nth-child(1){border:1px solid rgba(204,85,85,.35)}
+.thumb-card:nth-child(2){border:1px solid rgba(224,160,64,.35)}
+.thumb-card:nth-child(3){border:1px solid rgba(122,170,112,.35)}
+.thumb-head{display:flex;justify-content:space-between;align-items:center;font-family:var(--fs);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.thumb-card:nth-child(1) .thumb-head{color:var(--danger)}
+.thumb-card:nth-child(2) .thumb-head{color:var(--warn)}
+.thumb-card:nth-child(3) .thumb-head{color:var(--success)}
+.thumb-ta{background:var(--bg);border:1px solid var(--border);font-size:.8rem;line-height:1.5;padding:10px;border-radius:var(--r1);color:var(--txt2);min-height:120px;resize:none;width:100%}
+
+/* ── FÓRMULAS ── */
+.formula-steps{display:flex;flex-direction:column;gap:12px}
+.formula-step{display:flex;gap:14px;align-items:flex-start;background:var(--bg4);border:1px solid var(--border);border-radius:var(--r1);padding:14px}
+.step-num{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold3));color:#0e0a06;font-family:var(--fs);font-size:.85rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 10px rgba(212,175,55,.3)}
+.step-body h4{font-family:var(--fs);font-size:.85rem;font-weight:700;color:var(--gold2);margin-bottom:4px}
+.step-body p{font-size:.78rem;color:var(--txt2);line-height:1.6}
+.step-body em{color:var(--txt3);font-style:italic;font-size:.74rem;display:block;margin-top:4px;border-left:2px solid var(--gold3);padding-left:8px}
+
+/* ── INSIGHTS ── */
+.insights-output{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.insight-box{background:var(--bg4);border:1px solid var(--border);border-radius:var(--r1);padding:14px}
+.insight-box h4{font-family:var(--fs);font-size:.78rem;color:var(--gold2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.insight-box ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.insight-box li{font-size:.78rem;color:var(--txt2);line-height:1.4;padding-left:14px;position:relative}
+.insight-box li::before{content:'▸';position:absolute;left:0;color:var(--gold3);font-size:.65rem;top:2px}
+
+/* ── INFO BOX ── */
+.info-box{font-size:.78rem;color:var(--txt2);background:rgba(212,175,55,.05);border:1px solid var(--border);border-radius:var(--r1);padding:10px 14px;line-height:1.6}
+.info-box a{color:var(--gold2);text-decoration:none}
+.info-box a:hover{color:var(--gold)}
+.info-box strong{color:var(--gold2)}
+
+/* ── CUSTOM INPUT ── */
+.custom-field{display:none}
+.custom-field.visible{display:flex;flex-direction:column;gap:5px;animation:fadeUp .2s ease-out}
+.model-custom{display:none;margin-top:8px;width:100%}
+.model-custom.visible{display:block!important;animation:fadeUp .2s ease-out}
+/* iOS: garante que input custom seja editável */
+.model-custom[type=text]{
+  -webkit-user-select:text!important;
+  user-select:text!important;
+  pointer-events:auto!important;
+  opacity:1!important;
+  position:relative;
+  z-index:10;
+}
+
+/* ── INPUT WRAPPER (pass) ── */
+.iw{position:relative;display:flex;align-items:center}
+.iw input{padding-right:38px!important}
+.btn-eye{position:absolute;right:4px;background:none;border:none;color:var(--txt3);cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:.15s}
+.btn-eye:hover{color:var(--gold)}
+
+/* ── LOADING ── */
+.loading{position:fixed;inset:0;background:rgba(10,7,4,.93);backdrop-filter:blur(8px);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+.loading.active{display:flex}
+.spin-wrap{position:relative;width:72px;height:72px}
+.spin{position:absolute;width:72px;height:72px;border:3px solid transparent;border-radius:50%;animation:spin 1.2s cubic-bezier(.5,0,.5,1) infinite}
+.spin:nth-child(1){border-top-color:var(--gold);animation-delay:-.45s}
+.spin:nth-child(2){border-right-color:var(--gold2);animation-delay:-.3s}
+.spin:nth-child(3){border-bottom-color:var(--gold3);animation-delay:-.15s}
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.load-title{font-family:var(--fs);font-size:1.1rem;color:var(--gold);text-align:center;letter-spacing:.05em}
+.load-sub{font-size:.75rem;color:var(--txt3);text-align:center;max-width:300px;line-height:1.5;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* ── TOASTS ── */
+.toasts{position:fixed;bottom:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{pointer-events:auto;background:rgba(22,18,12,.96);border:1px solid var(--border);padding:12px 18px;border-radius:var(--r1);font-size:.82rem;box-shadow:var(--sh);display:flex;align-items:center;gap:10px;min-width:280px;max-width:420px;animation:toastIn .3s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(8px)}
+.toast.s{border-left:3px solid var(--success)}.toast.e{border-left:3px solid var(--danger)}.toast.w{border-left:3px solid var(--warn)}.toast.i{border-left:3px solid var(--info)}
+.toast.out{animation:toastOut .25s ease-in forwards}
+@keyframes toastIn{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes toastOut{from{opacity:1}to{transform:translateX(110%);opacity:0}}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:#0a0704}
+::-webkit-scrollbar-thumb{background:rgba(212,175,55,.18);border-radius:4px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .header-title{font-size:1.5rem}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .insights-output{grid-template-columns:1fr}
+  .main{padding:0 14px}
+  .tab-btn{font-size:.65rem;padding:12px 10px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <span class="header-cross">✝</span>
+  <div class="header-title">EXPLICADOR BÍBLICO</div>
+  <div class="header-sub">Narrativas Católicas · Fórmulas Virais · Geração via IA</div>
+  <div class="header-credits">
+    <span class="credits-dot"></span>
+    <span id="providerLabel">OpenRouter</span> &nbsp;·&nbsp;
+    <span id="modelLabel">Nenhum modelo configurado</span>
+  </div>
+</header>
+
+<!-- TABS NAV -->
+<div class="main">
+<nav class="tabs-nav">
+  <button class="tab-btn active" data-tab="tConfig">⚙️ Config</button>
+  <button class="tab-btn" data-tab="tNarrativa">📜 Narrativa</button>
+  <button class="tab-btn" data-tab="tIdeias">💡 Ideias</button>
+  <button class="tab-btn" data-tab="tThumbnails">🖼️ Thumbnails</button>
+  <button class="tab-btn" data-tab="tSEO">📊 SEO</button>
+  <button class="tab-btn" data-tab="tShorts">⚡ Shorts</button>
+  <button class="tab-btn" data-tab="tFormulas">📐 Fórmulas</button>
+  <button class="tab-btn" data-tab="tInsights">🔥 Insights Virais</button>
+  <button class="tab-btn" data-tab="tPrompts">🎨 Prompts de Imagens</button>
+</nav>
+
+<!-- ══════════════════════════════════════
+     ABA 1 — CONFIG
+══════════════════════════════════════ -->
+<div class="tab-panel active" id="tConfig">
+  <div class="card">
+    <div class="card-title">🔌 Provedor de IA</div>
+    <div class="info-box">
+      Use sua chave do <a href="https://openrouter.ai/keys" target="_blank"><strong>OpenRouter</strong></a> (começa com <strong>sk-or-v1-</strong>).
+      Modelos recomendados: <strong>google/gemini-flash-1.5</strong> ⚡ (barato), <strong>openai/gpt-4o-mini</strong> (equilibrado), <strong>meta-llama/llama-3.1-8b-instruct:free</strong> (grátis).
+    </div>
+    <div class="grid-2">
+      <div class="input-group">
+        <label>🔑 Chave API OpenRouter</label>
+        <div class="iw">
+          <input type="password" id="apiKey" placeholder="sk-or-v1-...">
+          <button class="btn-eye" id="btnEye">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="eyeIcon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>🤖 Modelo de IA</label>
+        <select id="aiModel">
+          <option value="google/gemini-flash-1.5">google/gemini-flash-1.5 ⚡ barato</option>
+          <option value="openai/gpt-4o-mini">openai/gpt-4o-mini — equilibrado</option>
+          <option value="anthropic/claude-sonnet-4-5">anthropic/claude-sonnet-4-5 — premium</option>
+          <option value="meta-llama/llama-3.1-8b-instruct:free">meta-llama — GRÁTIS 🆓</option>
+          <option value="google/gemini-2.0-flash-001">google/gemini-2.0-flash-001</option>
+          <option value="openai/gpt-4.1-mini">openai/gpt-4.1-mini</option>
+          <option value="custom">✏️ Digitar manualmente...</option>
+        </select>
+        <input type="text" id="customModel" class="model-custom" placeholder="Ex: mistralai/mistral-7b-instruct" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      </div>
+    </div>
+    <button class="btn btn-gold" id="btnSave" style="width:200px">💾 Salvar Configurações</button>
+  </div>
+
+  <!-- CONFIGURAÇÃO DA NARRATIVA -->
+  <div class="card">
+    <div class="card-title">📖 Configuração da Narrativa</div>
+    <p style="font-size:.78rem;color:var(--txt2)">Configure o tema e estilo — todos os geradores usam automaticamente.</p>
+    <div class="grid-4">
+      <div class="input-group">
+        <label>🎯 Tema / Intenção Principal</label>
+        <select id="cfgTheme">
+          <option value="Espíritos malignos da Bíblia">Espíritos malignos</option>
+          <option value="Anjos e hierarquia celestial">Anjos e hierarquia</option>
+          <option value="Falsos deuses de Israel">Falsos deuses de Israel</option>
+          <option value="Pessoas malignas da Bíblia e seu fim trágico">Pessoas malignas — fim trágico</option>
+          <option value="Milagres de Jesus explicados">Milagres de Jesus</option>
+          <option value="Profecias cumpridas">Profecias cumpridas</option>
+          <option value="Pragas e julgamentos divinos">Pragas e julgamentos</option>
+          <option value="Santos e mártires católicos">Santos e mártires</option>
+          <option value="Mistérios do Apocalipse">Mistérios do Apocalipse</option>
+          <option value="Vida após a morte nas religiões">Vida após a morte</option>
+          <option value="custom">✏️ Personalizado</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>🎭 Estilo Narrativo</label>
+        <select id="cfgStyle">
+          <option value="Analítico-jornalístico (estilo Explicador Bíblico)">Analítico-jornalístico</option>
+          <option value="Contemplativo-espiritual (mais devocional)">Contemplativo-espiritual</option>
+          <option value="Dramático-cinematográfico (mais tenso)">Dramático-cinematográfico</option>
+          <option value="Didático-catequético (mais explicativo)">Didático-catequético</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>🎙️ Tom e Intensidade</label>
+        <select id="cfgTone">
+          <option value="Neutro e objetivo">Neutro e objetivo</option>
+          <option value="Solene e reverencial">Solene e reverencial</option>
+          <option value="Urgente e impactante">Urgente e impactante</option>
+          <option value="Acessível e conversacional">Acessível e conversacional</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>🌐 Idioma</label>
+        <select id="cfgLang">
+          <option value="Español neutro (América Latina)">Español neutro (LATAM)</option>
+          <option value="Español (España)">Español (España)</option>
+          <option value="Português (Brasil)">Português (Brasil)</option>
+          <option value="English">English</option>
+          <option value="Français">Français</option>
+          <option value="Italiano">Italiano</option>
+          <option value="Deutsch">Deutsch</option>
+          <option value="Polski">Polski</option>
+          <option value="Русский">Русский</option>
+          <option value="日本語">日本語</option>
+          <option value="中文">中文</option>
+          <option value="العربية">العربية</option>
+          <option value="Hindi">Hindi</option>
+          <option value="custom">✏️ Personalizado</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="input-group">
+        <label>📺 Plataforma / Duração</label>
+        <select id="cfgDuration">
+          <option value="Vídeo longo YouTube (18 a 20 minutos)">YouTube — Vídeo Longo (18–20 min)</option>
+          <option value="Vídeo médio YouTube (5 a 8 minutos)">YouTube — Vídeo Médio (5–8 min)</option>
+          <option value="Short/Reels/TikTok (até 60 segundos)">Short / Reels / TikTok (até 60s)</option>
+          <option value="Podcast / Narração longa (30+ minutos)">Podcast / Narração longa</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>🔍 Situação Específica (opcional)</label>
+        <select id="cfgSituation">
+          <option value="">— Geral (sem situação específica) —</option>
+          <option value="Semana Santa / Páscoa">Semana Santa / Páscoa</option>
+          <option value="Natal / Advento">Natal / Advento</option>
+          <option value="Mês de Maria / Maio">Mês de Maria / Maio</option>
+          <option value="Mês das Almas / Novembro">Mês das Almas / Novembro</option>
+          <option value="Quaresma / Conversão">Quaresma / Conversão</option>
+          <option value="Festa de Santos">Festa de Santos</option>
+          <option value="Momento de crise ou perseguição">Crise / Perseguição à Igreja</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- ELEMENTOS ESPECIAIS -->
+    <div class="input-group">
+      <label>✨ Elementos Especiais a Incluir</label>
+      <div class="checks-grid" id="checksGrid">
+        <label class="check-item" id="chk0">
+          <input type="checkbox" value="Hook de quebra de expectativa obrigatório" checked>
+          <span class="check-label"><strong>🪝 Hook de Quebra de Expectativa</strong>Abre derrubando o que o espectador acredita</span>
+        </label>
+        <label class="check-item" id="chk1">
+          <input type="checkbox" value="Citações em Latim, Hebraico ou Grego com tradução" checked>
+          <span class="check-label"><strong>📜 Citação em Latim / Hebraico / Grego</strong>Com tradução e contexto etimológico</span>
+        </label>
+        <label class="check-item" id="chk2">
+          <input type="checkbox" value="Versículos bíblicos integrados com referência exata" checked>
+          <span class="check-label"><strong>📖 Versículos Bíblicos Integrados</strong>Com referência exata (livro, cap., vers.)</span>
+        </label>
+        <label class="check-item" id="chk3">
+          <input type="checkbox" value="Referências aos Santos Padres e Magistério Católico">
+          <span class="check-label"><strong>⛪ Santos Padres e Magistério</strong>Catecismo, Concílios, Encíclicas</span>
+        </label>
+        <label class="check-item" id="chk4">
+          <input type="checkbox" value="Deuterocanônicos incluídos (Tobias, Judite, Macabeus etc.)">
+          <span class="check-label"><strong>📚 Deuterocanônicos</strong>Tobias, Judite, Macabeus, Sabedoria...</span>
+        </label>
+        <label class="check-item" id="chk5">
+          <input type="checkbox" value="Técnica breadcrumb: suspense e promessas de revelação futura" checked>
+          <span class="check-label"><strong>🍞 Breadcrumb de Suspense</strong>"Esse detalhe vai ser importante..."</span>
+        </label>
+        <label class="check-item" id="chk6">
+          <input type="checkbox" value="CTA no meio do vídeo pedindo like e inscrição" checked>
+          <span class="check-label"><strong>📣 CTA no Meio do Vídeo</strong>Like, inscrição e sininho</span>
+        </label>
+        <label class="check-item" id="chk7">
+          <input type="checkbox" value="Fechamento moral espelho: reflexão para a vida atual" checked>
+          <span class="check-label"><strong>🪞 Fechamento Moral Espelho</strong>Reflexão para o presente + CTA final</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>💡 Ideia / Título Específico (opcional — importe da aba Ideias)</label>
+      <input type="text" id="cfgIdeia" placeholder="Cole aqui o título ou ideia específica importada da aba Ideias...">
+    </div>
+
+    <div class="input-group">
+      <label>🌐 Tema Personalizado</label>
+      <input type="text" id="cfgCustomTheme" class="custom-field" placeholder="Descreva o tema personalizado..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    </div>
+    <div class="input-group">
+      <label>🌐 Idioma Personalizado</label>
+      <input type="text" id="cfgCustomLang" class="custom-field" placeholder="Digite o idioma..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    </div>
+
+    <button class="btn btn-gold" id="btnSaveNarConfig" style="width:220px">✅ Salvar Configurações</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ABA 2 — NARRATIVA
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tNarrativa">
+  <div class="panel-header">
+    <h2>📜 Gerador de Narrativa Bíblica</h2>
+    <p>Gera roteiro completo baseado nas configurações da aba Config + fórmula narrativa do Explicador Bíblico.</p>
+  </div>
+  <div class="card">
+    <div class="info-box">⚙️ As configurações de <strong>Tema, Estilo, Tom, Idioma, Plataforma e Elementos Especiais</strong> são lidas automaticamente da aba <strong>Config</strong>. Ajuste-as lá antes de gerar.</div>
+    <button class="btn btn-gold btn-action" id="btnNarrativa">🚀 Gerar Narrativa Completa</button>
+    <div class="output-box">
+      <div class="output-header">
+        <span class="output-label">📜 Narrativa Gerada</span>
+        <button class="btn btn-sm" id="btnCopyNar">Copiar</button>
+      </div>
+      <textarea class="output-textarea" id="outNar" readonly placeholder="A narrativa aparecerá aqui..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ABA 3 — IDEIAS
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tIdeias">
+  <div class="panel-header">
+    <h2>💡 Ideias de Títulos Virais</h2>
+    <p>10 ideias de vídeos com títulos de alto impacto seguindo a fórmula do canal.</p>
+  </div>
+  <div class="card">
+    <div class="input-group">
+      <label>Nicho ou Tema Geral</label>
+      <input type="text" id="nicheInput" placeholder="Ex: Santos católicos, Anjos guerreiros, Relíquias bíblicas...">
+    </div>
+    <button class="btn btn-gold btn-action" id="btnIdeias">💡 Gerar 10 Ideias Virais</button>
+  </div>
+  <div id="ideasContainer" class="ideas-grid">
+    <p style="grid-column:1/-1;text-align:center;color:var(--txt3);font-style:italic;padding:30px 0">Nenhuma ideia gerada ainda.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ABA 4 — THUMBNAILS
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tThumbnails">
+  <div class="panel-header">
+    <h2>🖼️ Thumbnails A/B/C</h2>
+    <p>3 prompts de thumbnail para testes de CTR — Mistério, Revelação e Impacto.</p>
+  </div>
+  <div class="card">
+    <div class="input-group">
+      <label>Tema do Vídeo</label>
+      <input type="text" id="thumbTheme" placeholder="Ex: O Fim Trágico de Judas, A Arca do Pacto...">
+    </div>
+    <button class="btn btn-gold btn-action" id="btnThumbs">🖼️ Gerar 3 Thumbnails</button>
+  </div>
+  <div class="thumb-grid">
+    <div class="thumb-card">
+      <div class="thumb-head"><span>🅰️ Teste A — Mistério / Perigo</span><button class="btn btn-sm" id="btnCopyA">Copiar</button></div>
+      <textarea class="thumb-ta" id="outThumbA" readonly placeholder="Aguardando..."></textarea>
+    </div>
+    <div class="thumb-card">
+      <div class="thumb-head"><span>🅱️ Teste B — Revelação / Conflito</span><button class="btn btn-sm" id="btnCopyB">Copiar</button></div>
+      <textarea class="thumb-ta" id="outThumbB" readonly placeholder="Aguardando..."></textarea>
+    </div>
+    <div class="thumb-card">
+      <div class="thumb-head"><span>🅲 Teste C — Impacto / Lição</span><button class="btn btn-sm" id="btnCopyC">Copiar</button></div>
+      <textarea class="thumb-ta" id="outThumbC" readonly placeholder="Aguardando..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ABA 5 — SEO
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tSEO">
+  <div class="panel-header">
+    <h2>📊 SEO Completo YouTube</h2>
+    <p>3 títulos otimizados, descrição, 30 tags, 15 hashtags e timestamps.</p>
+  </div>
+  <div class="card">
+    <div class="grid-2">
+      <div class="input-group">
+        <label>Tema do Vídeo</label>
+        <input type="text" id="seoTheme" placeholder="Ex: Falsos deuses de Israel...">
+      </div>
+      <div class="input-group">
+        <label>Narrativa (opcional — melhora o SEO)</label>
+        <input type="text" id="seoNar" placeholder="Cole um resumo da narrativa ou deixe em branco...">
+      </div>
+    </div>
+    <button class="btn btn-gold btn-action" id="btnSEO">📊 Gerar SEO Completo</button>
+    <div class="output-box">
+      <div class="output-header">
+        <span class="output-label">📈 SEO Completo</span>
+        <button class="btn btn-sm" id="btnCopySEO">Copiar</button>
+      </div>
+      <textarea class="output-textarea" id="outSEO" readonly placeholder="Títulos, descrição, tags e hashtags aparecerão aqui..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ABA 6 — SHORTS
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tShorts">
+  <div class="panel-header">
+    <h2>⚡ Gerador de Shorts / Reels / TikTok</h2>
+    <p>Narrativa ultra-compacta (45–60 segundos) com gancho explosivo para plataformas verticais.</p>
+  </div>
+  <div class="card">
+    <div class="grid-2">
+      <div class="input-group">
+        <label>Tema do Short</label>
+        <input type="text" id="shortTheme" placeholder="Ex: O momento exato em que Judas percebeu o erro...">
+      </div>
+      <div class="input-group">
+        <label>Idioma</label>
+        <select id="shortLang">
+          <option value="Español neutro (América Latina)">Español neutro (LATAM)</option>
+          <option value="Español (España)">Español (España)</option>
+          <option value="Português (Brasil)">Português (Brasil)</option>
+          <option value="English">English</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-gold btn-action" id="btnShort">⚡ Gerar Roteiro de Short</button>
+    <div class="output-box">
+      <div class="output-header">
+        <span class="output-label">⚡ Roteiro Short (45–60s)</span>
+        <button class="btn btn-sm" id="btnCopyShort">Copiar</button>
+      </div>
+      <textarea class="output-textarea" id="outShort" readonly placeholder="Roteiro ultra-compacto para Short aparecerá aqui..." style="min-height:160px"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ABA 7 — FÓRMULAS
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tFormulas">
+  <div class="panel-header">
+    <h2>📐 Fórmula Narrativa do Canal</h2>
+    <p>A estrutura exata dos 6 passos que fazem o Explicador Bíblico crescer 2,4 milhões de views em 10 vídeos.</p>
+  </div>
+  <div class="formula-steps">
+    <div class="formula-step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>🪝 Gancho — Quebra de Expectativa</h4>
+        <p>O gancho nunca é apenas informativo — é provocativo ou corretivo. O narrador começa afirmando que o que o espectador "sabe" está incompleto ou errado.</p>
+        <em>"Aqui a crença popular de que todo anjo é gentil começa a desabar." / "Diferente do que muita gente acredita..."</em>
+      </div>
+    </div>
+    <div class="formula-step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>🔍 Contexto Invisível</h4>
+        <p>Após o gancho, a abertura estabelece base técnica — etimologia hebraica/grega, cultura da época, arqueologia — que valida a autoridade do que será dito.</p>
+        <em>"Na cultura judaica do primeiro século, o terceiro dia não era neutro — era o dia associado à bênção divina..."</em>
+      </div>
+    </div>
+    <div class="formula-step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>❤️ Batidas Emocionais</h4>
+        <p>Transição do fato histórico para o sentimento do personagem e depois para o dilema humano atual. Humaniza os relatos antigos.</p>
+        <em>"A sensação de estar no limite, de ver a alegria escorregando pelos dedos sem conseguir segurar..."</em>
+      </div>
+    </div>
+    <div class="formula-step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>🍞 Breadcrumb — Suspense Contínuo</h4>
+        <p>Promessas de revelação futura para manter retenção. O espectador não pode parar porque "esse detalhe vai ser importante mais à frente".</p>
+        <em>"Esse detalhe vai ser importante mais à frente. A tormenta estava apenas começando."</em>
+      </div>
+    </div>
+    <div class="formula-step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>📋 Lista Escalonada com CTA Central</h4>
+        <p>Itens 1–4 informativos → Itens 5–7 surpreendentes → Último item é o clímax. CTA de like/inscrição inserido no meio da lista.</p>
+        <em>"Este é o espírito mais perturbador desta lista... Azazel nunca recebeu adoração, recebia o lixo moral de um povo inteiro."</em>
+      </div>
+    </div>
+    <div class="formula-step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h4>🪞 Fechamento Moral Espelho + CTA Final</h4>
+        <p>Ponte moral entre a história bíblica e a vida do espectador hoje. Segue pedido de engajamento que reforça comunidade de "estudiosos sérios".</p>
+        <em>"Isso não é só história antiga; é um espelho que nos mostra que muitas vezes um mínimo descuido pode nos levar para longe."</em>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ABA 8 — INSIGHTS VIRAIS
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tInsights">
+  <div class="panel-header">
+    <h2>🔥 Insights Virais do Canal</h2>
+    <p>Análise das tendências e padrões que fazem os vídeos bíblicos explodirem no YouTube.</p>
+  </div>
+  <div class="card">
+    <div class="input-group">
+      <label>Tema para Análise de Viralidade</label>
+      <input type="text" id="insightTheme" placeholder="Ex: Anjos, Demônios, Profecias, Santos...">
+    </div>
+    <button class="btn btn-gold btn-action" id="btnInsights">🔥 Gerar Análise de Insights Virais</button>
+    <div class="output-box">
+      <div class="output-header">
+        <span class="output-label">🔥 Insights Gerados</span>
+        <button class="btn btn-sm" id="btnCopyInsights">Copiar</button>
+      </div>
+      <textarea class="output-textarea" id="outInsights" readonly placeholder="Insights virais, padrões de título, ângulos inexplorados e estratégias aparecerão aqui..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ABA 9 — PROMPTS DE IMAGENS
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tPrompts">
+  <div class="panel-header">
+    <h2>🎨 Prompts de Imagens + Keywords</h2>
+    <p>Prompts para Midjourney/DALL-E/Sora e keywords para Pixabay, Pexels e Storyblocks.</p>
+  </div>
+  <div class="card">
+    <div class="input-group">
+      <label>Cole a narrativa gerada (Aba Narrativa)</label>
+      <textarea id="promptsNar" rows="5" placeholder="Cole o texto da narrativa aqui para gerar os prompts visuais..."></textarea>
+    </div>
+    <div class="grid-2" style="margin-top:4px">
+      <button class="btn btn-gold btn-action" id="btnImgPrompts">🎨 Gerar Prompts Visuais (IA)</button>
+      <button class="btn btn-gold btn-action" id="btnKeywords">🔍 Gerar Keywords Banco de Mídia</button>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="output-box">
+      <div class="output-header">
+        <span class="output-label">🎨 Prompts Midjourney / DALL-E / Sora</span>
+        <button class="btn btn-sm" id="btnCopyPrompts">Copiar</button>
+      </div>
+      <textarea class="output-textarea" id="outPrompts" readonly placeholder="Prompts visuais por cena (watercolor sketch, dramatic lighting)..."></textarea>
+    </div>
+    <div class="output-box">
+      <div class="output-header">
+        <span class="output-label">🔍 Keywords Pixabay / Pexels / Storyblocks</span>
+        <button class="btn btn-sm" id="btnCopyKw">Copiar</button>
+      </div>
+      <textarea class="output-textarea" id="outKeywords" readonly placeholder="Termos de busca em inglês por cena..."></textarea>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- LOADING -->
+<div class="loading" id="loading">
+  <div class="spin-wrap"><div class="spin"></div><div class="spin"></div><div class="spin"></div></div>
+  <div class="load-title" id="loadTitle">Processando...</div>
+  <div class="load-sub" id="loadSub">Aguarde de 10 a 30 segundos.</div>
+</div>
+<div class="toasts" id="toasts"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const state = { apiKey:'', model:'google/gemini-flash-1.5' };
+  const $ = id => document.getElementById(id);
+
+  const LOAD = {
+    nar:      {t:"Redigindo Manuscrito Sagrado...",       s:"Estruturando gancho, etimologia e batidas emocionais."},
+    ideas:    {t:"Analisando Tendências Bíblicas...",     s:"Processando títulos virais com a fórmula do canal."},
+    thumbs:   {t:"Projetando Miniaturas Virais...",       s:"Criando composições A/B/C para alto CTR."},
+    seo:      {t:"Otimizando Metadados...",               s:"Refinando títulos, tags e descrição."},
+    short:    {t:"Comprimindo Narrativa...",              s:"Criando roteiro explosivo para 45–60 segundos."},
+    insights: {t:"Analisando Padrões Virais...",         s:"Identificando tendências e ângulos inexplorados."},
+    prompts:  {t:"Pintando a Aquarela Digital...",        s:"Escrevendo prompts artísticos por cena."},
+    kw:       {t:"Examinando a Narrativa...",             s:"Extraindo palavras-chave por cena para bancos de mídia."}
+  };
+
+  // ── Toast ──
+  function toast(msg, type='s', dur=4000) {
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    const ico = {s:'✨',e:'⚠️',w:'🔔',i:'📖'};
+    t.innerHTML = `<span>${ico[type]||'✨'}</span><span>${msg}</span>`;
+    $('toasts').appendChild(t);
+    setTimeout(()=>{ t.classList.add('out'); setTimeout(()=>t.remove(),300); }, dur);
+  }
+
+  // ── Loading ──
+  function load(type) {
+    const m = LOAD[type]||{t:'Processando...',s:'Aguarde.'};
+    $('loadTitle').textContent = m.t;
+    $('loadSub').textContent = m.s;
+    $('loading').classList.add('active');
+  }
+  function unload() { $('loading').classList.remove('active'); }
+
+  // ── Toggle pass ──
+  $('btnEye').addEventListener('click', () => {
+    const show = $('apiKey').type==='password';
+    $('apiKey').type = show?'text':'password';
+    $('eyeIcon').innerHTML = show
+      ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`
+      : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+  });
+
+  // ── Modelo custom ──
+  $('aiModel').addEventListener('change', function() {
+    const customInput = $('customModel');
+    if(this.value === 'custom') {
+      customInput.classList.add('visible');
+      customInput.style.display = 'block';
+      customInput.removeAttribute('disabled');
+      customInput.removeAttribute('readonly');
+      // iOS: força foco depois de pequeno delay
+      setTimeout(() => { customInput.focus(); }, 100);
+    } else {
+      customInput.classList.remove('visible');
+      customInput.style.display = 'none';
+    }
+  });
+  function getModel() {
+    if($('aiModel').value === 'custom') {
+      const v = $('customModel').value.trim();
+      return v || 'google/gemini-flash-1.5';
+    }
+    return $('aiModel').value;
+  }
+
+  // ── Tema/idioma custom ──
+  $('cfgTheme').addEventListener('change', function() {
+    const el = $('cfgCustomTheme');
+    if(this.value === 'custom') {
+      el.classList.add('visible'); el.style.display='flex';
+      el.removeAttribute('disabled'); setTimeout(()=>el.focus(), 100);
+    } else { el.classList.remove('visible'); el.style.display='none'; }
+  });
+  $('cfgLang').addEventListener('change', function() {
+    const el = $('cfgCustomLang');
+    if(this.value === 'custom') {
+      el.classList.add('visible'); el.style.display='flex';
+      el.removeAttribute('disabled'); setTimeout(()=>el.focus(), 100);
+    } else { el.classList.remove('visible'); el.style.display='none'; }
+  });
+
+  // ── Checkboxes visual ──
+  document.querySelectorAll('.check-item input[type=checkbox]').forEach(cb => {
+    const item = cb.closest('.check-item');
+    if(cb.checked) item.classList.add('checked');
+    cb.addEventListener('change', ()=> item.classList.toggle('checked', cb.checked));
+  });
+
+  // ── Status ──
+  function updateStatus() {
+    const ok = state.apiKey.startsWith('sk-or-v1-');
+    $('providerLabel').textContent = ok ? '🟢 OpenRouter' : '🔴 Desconectado';
+    $('modelLabel').textContent = ok ? state.model : 'Configure a chave API';
+  }
+
+  // ── Load/Save config ──
+  function loadCfg() {
+    const k = localStorage.getItem('eb_key');
+    const m = localStorage.getItem('eb_model');
+    const nc = localStorage.getItem('eb_narConfig');
+    if(k){ $('apiKey').value=k; state.apiKey=k; }
+    if(m){
+      const pre=['google/gemini-flash-1.5','openai/gpt-4o-mini','anthropic/claude-sonnet-4-5','meta-llama/llama-3.1-8b-instruct:free','google/gemini-2.0-flash-001','openai/gpt-4.1-mini'];
+      if(pre.includes(m)) $('aiModel').value=m;
+      else { $('aiModel').value='custom'; $('customModel').value=m; $('customModel').classList.add('visible'); }
+      state.model=m;
+    }
+    if(nc){
+      try {
+        const c = JSON.parse(nc);
+        if(c.theme) $('cfgTheme').value=c.theme;
+        if(c.style) $('cfgStyle').value=c.style;
+        if(c.tone)  $('cfgTone').value=c.tone;
+        if(c.lang)  $('cfgLang').value=c.lang;
+        if(c.dur)   $('cfgDuration').value=c.dur;
+        if(c.sit)   $('cfgSituation').value=c.sit;
+        if(c.ideia) $('cfgIdeia').value=c.ideia;
+        if(c.customTheme){ $('cfgCustomTheme').value=c.customTheme; $('cfgCustomTheme').classList.add('visible'); }
+        if(c.customLang) { $('cfgCustomLang').value=c.customLang;   $('cfgCustomLang').classList.add('visible'); }
+      } catch(e){}
+    }
+    updateStatus();
+  }
+
+  $('btnSave').addEventListener('click', () => {
+    const k = $('apiKey').value.trim();
+    const m = getModel();
+    if(!k){ toast('Cole sua chave do OpenRouter.','w'); return; }
+    if(!k.startsWith('sk-or-v1-')){ toast('Chave inválida — deve começar com sk-or-v1-','e'); return; }
+    localStorage.setItem('eb_key', k);
+    localStorage.setItem('eb_model', m);
+    state.apiKey=k; state.model=m;
+    updateStatus();
+    toast(`API configurada! Modelo: ${m}`,'s');
+  });
+
+  $('btnSaveNarConfig').addEventListener('click', () => {
+    const cfg = {
+      theme: $('cfgTheme').value, style: $('cfgStyle').value,
+      tone: $('cfgTone').value,   lang: $('cfgLang').value,
+      dur: $('cfgDuration').value, sit: $('cfgSituation').value,
+      ideia: $('cfgIdeia').value,
+      customTheme: $('cfgCustomTheme').value,
+      customLang: $('cfgCustomLang').value
+    };
+    localStorage.setItem('eb_narConfig', JSON.stringify(cfg));
+    toast('Configurações da narrativa salvas!','s');
+  });
+
+  // ── Tabs ──
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    $(btn.dataset.tab)?.classList.add('active');
+  }));
+
+  // ── Clipboard ──
+  function clip(btnId, taId) {
+    $(btnId).addEventListener('click', () => {
+      const ta = $(taId);
+      if(!ta.value.trim()){ toast('Nada para copiar.','w'); return; }
+      navigator.clipboard.writeText(ta.value).then(() => {
+        toast('Copiado!','s');
+        const b = $(btnId); b.classList.add('copied');
+        const o=b.textContent; b.textContent='✓ Copiado';
+        setTimeout(()=>{ b.classList.remove('copied'); b.textContent=o; }, 2500);
+      }).catch(()=>toast('Erro ao copiar.','e'));
+    });
+  }
+  clip('btnCopyNar','outNar'); clip('btnCopyA','outThumbA'); clip('btnCopyB','outThumbB');
+  clip('btnCopyC','outThumbC'); clip('btnCopySEO','outSEO'); clip('btnCopyShort','outShort');
+  clip('btnCopyInsights','outInsights'); clip('btnCopyPrompts','outPrompts'); clip('btnCopyKw','outKeywords');
+
+  // ── Lê configuração narrativa ──
+  function getNarConfig() {
+    const theme = $('cfgTheme').value==='custom' ? $('cfgCustomTheme').value.trim() : $('cfgTheme').value;
+    const lang  = $('cfgLang').value==='custom'  ? $('cfgCustomLang').value.trim()  : $('cfgLang').value;
+    const checks = [...document.querySelectorAll('.check-item input[type=checkbox]:checked')].map(c=>c.value);
+    return { theme, lang, style:$('cfgStyle').value, tone:$('cfgTone').value,
+             dur:$('cfgDuration').value, sit:$('cfgSituation').value,
+             ideia:$('cfgIdeia').value, checks };
+  }
+
+  // ── API OpenRouter ──
+  async function api(sys, usr) {
+    if(!state.apiKey){ toast('Configure a chave API primeiro.','e'); throw new Error('Sem chave'); }
+    try {
+      const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
+        headers: {
+          'Authorization': `Bearer ${state.apiKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': location.href || 'https://explicador-biblico.app',
+          'X-Title': 'Explicador Biblico'
+        },
+        body: JSON.stringify({
+          model: state.model,
+          max_tokens: 4000,
+          messages: [
+            { role: 'system', content: sys },
+            { role: 'user',   content: usr }
+          ]
+        })
+      });
+      if(!r.ok){
+        let errMsg = `HTTP ${r.status}`;
+        try { const e = await r.json(); errMsg = e.error?.message || errMsg; } catch(e){}
+        throw new Error(errMsg);
+      }
+      const d = await r.json();
+      return d.choices[0].message.content;
+    } catch(err) {
+      // Safari iOS às vezes bloqueia por CORS — tenta sem headers extras
+      if(err.message === 'Load failed' || err.message.includes('fetch')) {
+        const r2 = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${state.apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: state.model,
+            max_tokens: 4000,
+            messages: [
+              { role: 'system', content: sys },
+              { role: 'user',   content: usr }
+            ]
+          })
+        });
+        if(!r2.ok){ const e=await r2.json().catch(()=>({})); throw new Error(e.error?.message||`HTTP ${r2.status}`); }
+        const d2 = await r2.json();
+        return d2.choices[0].message.content;
+      }
+      throw err;
+    }
+  }
+
+  // ── NARRATIVA ──
+  $('btnNarrativa').addEventListener('click', async () => {
+    const c = getNarConfig();
+    if(!c.theme){ toast('Configure o tema na aba Config.','w'); return; }
+    const elemStr = c.checks.length ? `\nElementos especiais a incluir:\n- ${c.checks.join('\n- ')}` : '';
+    const sitStr  = c.sit ? `\nSituação especial: ${c.sit}` : '';
+    const idStr   = c.ideia ? `\nTítulo/ideia específica: "${c.ideia}"` : '';
+    const sys = `Você é um roteirista especialista em conteúdo bíblico católico para YouTube.
+Siga RIGOROSAMENTE esta estrutura de 6 passos:
+1. GANCHO: Quebra de expectativa — derruba o que o espectador acredita
+2. CONTEXTO INVISÍVEL: Etimologia hebraica/grega, arqueologia, cultura da época
+3. BATIDAS EMOCIONAIS: Fato histórico → sentimento do personagem → dilema humano atual
+4. BREADCRUMB: Suspense que promete revelação futura
+5. LISTA ESCALONADA: Informativos → surpreendentes → clímax. CTA no meio.
+6. FECHAMENTO MORAL: Reflexão espelho para o presente + CTA comunitário
+Regras: SEM dicas de edição. SEM subtítulos. APENAS narração pura para text-to-speech.
+Perspectiva católica sempre.`;
+    const usr = `Escreva narrativa completa:
+- Tema: ${c.theme}
+- Idioma: ${c.lang}
+- Duração/Plataforma: ${c.dur}
+- Estilo: ${c.style}
+- Tom: ${c.tone}${sitStr}${idStr}${elemStr}
+Retorne exclusivamente a narração pronta para ser falada.`;
+    load('nar');
+    try {
+      const r = await api(sys, usr);
+      $('outNar').value = r;
+      $('promptsNar').value = r;
+      toast('Narrativa gerada!','s');
+    } catch(e){ toast(`Erro: ${e.message}`,'e'); } finally { unload(); }
+  });
+
+  // ── IDEIAS ──
+  $('btnIdeias').addEventListener('click', async () => {
+    const niche = $('nicheInput').value.trim();
+    if(!niche){ toast('Digite o nicho.','w'); return; }
+    const sys = `Especialista em conteúdo viral para YouTube católico em espanhol.
+Gere 10 ideias usando fórmulas do canal Explicador Bíblico:
+- "Cada X da Bíblia Explicado em Y Minutos"
+- "O Trágico FIM de..."
+- "Cada X Mais Y DA BÍBLIA"
+Retorne APENAS JSON válido — array com {"titulo","resumo","justificativa"}. Sem markdown.`;
+    load('ideas');
+    try {
+      let raw = await api(sys, `Gere 10 ideias para: "${niche}".`);
+      raw = raw.trim().replace(/^```json\s*/,'').replace(/^```/,'').replace(/```$/,'').trim();
+      renderIdeas(JSON.parse(raw));
+      toast('10 ideias geradas!','s');
+    } catch(e){
+      $('ideasContainer').innerHTML=`<p style="grid-column:1/-1;text-align:center;color:var(--danger);padding:30px">Erro ao processar. Tente novamente.</p>`;
+    } finally { unload(); }
+  });
+
+  function esc(s){ return (s||'').replace(/[&<>'"]/g,t=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t]||t)); }
+
+  function renderIdeas(list) {
+    $('ideasContainer').innerHTML='';
+    if(!Array.isArray(list)||!list.length){ $('ideasContainer').innerHTML='<p>Nenhuma ideia.</p>'; return; }
+    list.forEach((idea,i)=>{
+      const card=document.createElement('div'); card.className='idea-card';
+      card.innerHTML=`
+        <span class="idea-num">Ideia #${i+1}</span>
+        <div class="idea-title">${esc(idea.titulo)}</div>
+        <div class="idea-desc">${esc(idea.resumo)}</div>
+        <div class="idea-viral"><strong>Viralidade:</strong> ${esc(idea.justificativa||idea.justification)}</div>
+        <button class="btn btn-gold btn-sm" style="margin-top:6px;width:100%" data-t="${esc(idea.titulo)}">▶ Usar esta ideia</button>`;
+      card.querySelector('button').addEventListener('click', e=>{
+        const t=e.currentTarget.dataset.t;
+        $('cfgTheme').value='custom'; $('cfgCustomTheme').classList.add('visible'); $('cfgCustomTheme').value=t;
+        $('cfgIdeia').value=t; $('thumbTheme').value=t; $('seoTheme').value=t;
+        document.querySelector('.tab-btn[data-tab="tConfig"]').click();
+        toast(`Tema definido: "${t}"`,'i');
+      });
+      $('ideasContainer').appendChild(card);
+    });
+  }
+
+  // ── THUMBNAILS ──
+  $('btnThumbs').addEventListener('click', async () => {
+    const theme=$('thumbTheme').value.trim();
+    if(!theme){ toast('Digite o tema.','w'); return; }
+    const sys=`Designer de thumbnails para YouTube católico em espanhol especializado em alto CTR.
+Crie 3 prompts usando exatamente [OPCION_A], [OPCION_B], [OPCION_C].
+A=Mistério/Perigo, B=Revelação/Conflito, C=Consequência/Impacto.
+Cada prompt: personagens, expressões, cores dominantes, iluminação, texto sobreposto (máx 3 palavras em espanhol).`;
+    load('thumbs');
+    try {
+      const r=await api(sys,`Tema: "${theme}"`);
+      $('outThumbA').value=(r.match(/\[OPCION_A\]([\s\S]*?)(?=\[OPCION_B\]|$)/i)?.[1]||'').trim();
+      $('outThumbB').value=(r.match(/\[OPCION_B\]([\s\S]*?)(?=\[OPCION_C\]|$)/i)?.[1]||'').trim();
+      $('outThumbC').value=(r.match(/\[OPCION_C\]([\s\S]*?)$/i)?.[1]||'').trim();
+      toast('3 thumbnails geradas!','s');
+    } catch(e){ toast(`Erro: ${e.message}`,'e'); } finally { unload(); }
+  });
+
+  // ── SEO ──
+  $('btnSEO').addEventListener('click', async () => {
+    const theme=$('seoTheme').value.trim();
+    if(!theme){ toast('Digite o tema.','w'); return; }
+    const sys=`Especialista em SEO para YouTube católico. Gere:
+1. 3 títulos otimizados
+2. Descrição (~300 palavras)
+3. 30 tags (separadas por vírgula)
+4. 15 hashtags
+5. Capítulos/timestamps (vídeo 18-20 min)
+6. Categoria recomendada`;
+    const nar=$('seoNar').value.trim();
+    load('seo');
+    try {
+      $('outSEO').value=await api(sys,`Tema: ${theme}${nar?'\nNarrativa: '+nar:''}`);
+      toast('SEO gerado!','s');
+    } catch(e){ toast(`Erro: ${e.message}`,'e'); } finally { unload(); }
+  });
+
+  // ── SHORTS ──
+  $('btnShort').addEventListener('click', async () => {
+    const theme=$('shortTheme').value.trim();
+    if(!theme){ toast('Digite o tema do Short.','w'); return; }
+    const lang=$('shortLang').value;
+    const sys=`Roteirista especialista em Shorts/Reels/TikTok de conteúdo bíblico católico.
+Crie um roteiro ultra-compacto de 45–60 segundos com:
+- Gancho explosivo na primeira frase (pergunta ou afirmação chocante)
+- 1 fato bíblico surpreendente com referência
+- 1 detalhe histórico ou etimológico
+- Fechamento com gancho para o canal longo
+- Máximo 120 palavras. Apenas a narração pura.`;
+    load('short');
+    try {
+      $('outShort').value=await api(sys,`Tema: "${theme}"\nIdioma: ${lang}`);
+      toast('Roteiro de Short gerado!','s');
+    } catch(e){ toast(`Erro: ${e.message}`,'e'); } finally { unload(); }
+  });
+
+  // ── INSIGHTS ──
+  $('btnInsights').addEventListener('click', async () => {
+    const theme=$('insightTheme').value.trim();
+    if(!theme){ toast('Digite o tema para análise.','w'); return; }
+    const sys=`Analista de conteúdo viral para YouTube católico em espanhol.
+Com base no tema fornecido, gere:
+1. TOP 5 ângulos inexplorados com alto potencial viral
+2. TOP 5 fórmulas de título que funcionam para este tema
+3. TOP 5 hooks de abertura testados para este nicho
+4. Análise de por que este tema performa bem no YouTube
+5. Sugestão de série de vídeos (3–5 episódios encadeados)`;
+    load('insights');
+    try {
+      $('outInsights').value=await api(sys,`Tema: "${theme}"`);
+      toast('Insights gerados!','s');
+    } catch(e){ toast(`Erro: ${e.message}`,'e'); } finally { unload(); }
+  });
+
+  // ── PROMPTS VISUAIS ──
+  $('btnImgPrompts').addEventListener('click', async () => {
+    const nar=$('promptsNar').value.trim();
+    if(!nar){ toast('Cole a narrativa.','w'); return; }
+    const sys=`Diretor de arte especialista em IAs gerativas (Midjourney, DALL-E, Sora).
+Estilo Explicador Bíblico: watercolor sketch, clean white background, personagens bíblicos expressivos, dramatic lighting, chiaroscuro.
+Crie prompts por cena cronológica. Adicione --ar 16:9 no final de cada prompt.`;
+    load('prompts');
+    try {
+      $('outPrompts').value=await api(sys,nar);
+      toast('Prompts visuais gerados!','s');
+    } catch(e){ toast(`Erro: ${e.message}`,'e'); } finally { unload(); }
+  });
+
+  // ── KEYWORDS ──
+  $('btnKeywords').addEventListener('click', async () => {
+    const nar=$('promptsNar').value.trim();
+    if(!nar){ toast('Cole a narrativa.','w'); return; }
+    const sys=`Editor de vídeo especialista em canais bíblicos. Analise a narrativa e extraia keywords em inglês para Pixabay, Pexels e Storyblocks. Organize por cenas cronológicas com 3–5 palavras-chave em inglês por cena.`;
+    load('kw');
+    try {
+      $('outKeywords').value=await api(sys,nar);
+      toast('Keywords geradas!','s');
+    } catch(e){ toast(`Erro: ${e.message}`,'e'); } finally { unload(); }
+  });
+
+  loadCfg();
+});
+</script>
+</body>
+</html>
